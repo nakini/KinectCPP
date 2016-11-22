@@ -11,7 +11,7 @@ endif()
 
 
 # To use PKG_CHECK_MODULES to find some optional packages
-find_package(PkgConfig)
+FIND_PACKAGE(PkgConfig)
 
 #    Tell CMake where to find the source files and where to leave executables
 SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR})
@@ -32,6 +32,7 @@ SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin/win32/)
 ENDIF()
 
 # Check for OpenCV packages.
+FIND_PACKAGE(OpenCV)
 if (OpenCV_FOUND)
   message("OpenCV Found")
   #SET(CIMG_CFLAGS "${CIMG_CFLAGS} ${CIMG_OPENCV_CCFLAGS}")
