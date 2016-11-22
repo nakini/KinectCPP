@@ -1,7 +1,44 @@
 cmake_minimum_required(VERSION 2.8)
 project(Depth2XYX )
-find_package( OpenCV REQUIRED )
+
+# Prevent compilation in-source
+if( ${CMAKE_BINARY_DIR} STREQUAL ${PROJECT_SOURCE_DIR} )
+  Message( " " )
+  Message( FATAL_ERROR "Source and build  directories are the same.
+ Create an empty build directory,
+ change into it and re-invoke cmake")
+endif()
 
 
-add_executable( Depth2XYX  Depth2XYX.cpp )
-target_link_libraries( Depth2XYX  ${OpenCV_LIBS} )
+# To use PKG_CHECK_MODULES to find some optional packages
+find_package(PkgConfig)
+
+#    Tell CMake where to find the source files and where to leave executables
+SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR})
+SET(SOURCE_FILE_DIR ${PROJECT_SOURCE_DIR}/src/)
+
+IF(APPLE)
+SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib/macosx/)
+SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib/macosx/)
+SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin/macosx/)
+ELSEIF(UNIX)
+SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib/linux/)
+SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib/linux/)
+SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin/linux/)
+ELSEIF(WIN32)
+SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib/win32/)
+SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib/win32/)
+SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin/win32/)
+ENDIF()
+
+# Check for OpenCV packages.
+if (OpenCV_FOUND)
+  message("OpenCV Found")
+  #SET(CIMG_CFLAGS "${CIMG_CFLAGS} ${CIMG_OPENCV_CCFLAGS}")
+  include_directories(${OpenCV_INCLUDE_DIRS})
+  link_directories(${OpenCV_LIB_DIRS})
+  SET( SYSTEM_LIBS  ${SYSTEM_LIBS}  ${OpenCV_LIBS} )
+endif()
+
+add_executable( Depth2XYX  ${SOURCE_FILE_DIR}/Depth2XYX.cpp )
+target_link_libraries( Depth2XYX  ${SYSTEM_LIBS} )
