@@ -31,6 +31,19 @@ SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib/win32/)
 SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin/win32/)
 ENDIF()
 
+
+
+#Enable C++11 support
+SET(ENABLE_C11 ON CACHE BOOL "Compile with C++11")
+MESSAGE("WARNING!! C++11 support has been enabled!!!")
+
+if(ENABLE_C11)
+    include_directories(${CMAKE_CURRENT_BINARY_DIR})
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}-std=c++11")
+else()
+    include_directories(${CMAKE_CURRENT_BINARY_DIR})
+endif()
+
 # Check for OpenCV packages.
 FIND_PACKAGE(OpenCV)
 if (OpenCV_FOUND)
