@@ -1,5 +1,5 @@
 # Build and Release Folders
-build/
+build*/
 bin/
 bin-debug/
 bin-release/
@@ -21,3 +21,7 @@ bin-release/
 
 # Swap files.
 *.swp
+
+# CMake cache files
+*.user
+*.autosave
