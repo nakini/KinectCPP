@@ -104,7 +104,7 @@ int main(int argc, char** argv )
 
     // Insert the header
     plyFile << "ply\n";
-    plyFile << "format  binary 1.0\n";
+    plyFile << "format   ascii 1.0\n";
     plyFile << "comment made by Tushar Nakini, ViGIR\n";
     plyFile << "element vertex " << gridMat.size() <<"\n";
     plyFile << "property float32 x\n";
