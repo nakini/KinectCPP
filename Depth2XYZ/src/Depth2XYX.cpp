@@ -3,6 +3,8 @@
 #include <fstream>
 #include <iostream>
 
+//#define DEBUG
+
 //IR Camera parameters as given by libfreenect2
 struct camera_params_t
 {
@@ -41,21 +43,24 @@ int main(int argc, char** argv )
 
     int r, c;
 
-//    //Print the image depth before convertion
-//    std::cout << imageMat.depth() << std::endl;
-//    std::cout << imageMat.type() << std::endl;
-//    std::cout << imageMat.channels() << std::endl;
+#ifdef DEBUG
+    //Print the image depth before convertion
+    std::cout << imageMat.depth() << std::endl;
+    std::cout << imageMat.type() << std::endl;
+    std::cout << imageMat.channels() << std::endl;
+#endif
 
     // Convert the 16 bit image to 32 bit to display on the screen.
     imageMat.convertTo( imageMat, CV_32FC1);
+#ifdef DEBUG
     cv::namedWindow("Display Image", cv::WINDOW_AUTOSIZE );
     cv::imshow("Display Image", imageMat);
     cv::waitKey(0);
-
-//    // Print the image depth after the convertion
-//    std::cout << imageMat.depth() << std::endl;
-//    std::cout << imageMat.type() << std::endl;
-//    std::cout << imageMat.channels() << std::endl;
+    // Print the image depth after the convertion
+    std::cout << imageMat.depth() << std::endl;
+    std::cout << imageMat.type() << std::endl;
+    std::cout << imageMat.channels() << std::endl;
+#endif
 
     // Convert the image pixels into 3D point clouds and crate a ply file in the end.
     std::vector<std::vector<float>> gridMat;
@@ -79,24 +84,26 @@ int main(int argc, char** argv )
         }
     }
 
+#ifdef DEBUG
     // Sanity check for the image.
-//    float *tmpData = reinterpret_cast<float*>(imageMat.data);
-//    // Display few pixels for sanity check.
-//    for (r=0; r<10; r++){
-//        for (c=0; c<14; c++){
-//            std::cout <<tmpData[r*14+c] << "\t";
-////            std::cout<< imageMat.at<float>(r,c) << "\t";
-//        }
-//        std::cout << std::endl;
-//    }
+    float *tmpData = reinterpret_cast<float*>(imageMat.data);
+    // Display few pixels for sanity check.
+    for (r=0; r<10; r++){
+        for (c=0; c<14; c++){
+            std::cout <<tmpData[r*14+c] << "\t";
+//            std::cout<< imageMat.at<float>(r,c) << "\t";
+        }
+        std::cout << std::endl;
+    }
 
-//    // Sanity check for the evaluation of matrix values.
-//    for (r=0; r<2; r++){
-//        for (c=0; c<7; c++){
-//            std::cout << gridMat[r*7+c][0] << "\t" << gridMat[r*7+c][1] << "\t" \
-//                                           << gridMat[r*7+c][2] << std::endl;
-//        }
-//    }
+    // Sanity check for the evaluation of matrix values.
+    for (r=0; r<2; r++){
+        for (c=0; c<7; c++){
+            std::cout << gridMat[r*7+c][0] << "\t" << gridMat[r*7+c][1] << "\t" \
+                                           << gridMat[r*7+c][2] << std::endl;
+        }
+    }
+#endif
 
     // Now write the points into a ply file.
     std::ofstream plyFile;
