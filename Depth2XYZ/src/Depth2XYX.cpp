@@ -32,34 +32,46 @@ int main(int argc, char** argv )
     // Check the input arguments. The user should provide the image path and the maximum distance.
     if ( argc != 6 )
     {
-        printf("usage: Depth2XYZ <Image_Dir_Path> <Image_Name without any number or extension> <Maximum_Depth> <Start_Num> <Stop_Num>\n");
+        std::cout << "usage: Depth2XYZ <Image_Dir_Path> <Image_Name without any number or extension>" << \
+                    "<Maximum_Depth> <Start_Num> <Stop_Num>" << std::endl;
         return -1;
     }
 
-    // First, create a directory to store all ply files. The newly created directory name is "PlyFiles" which will be created under the given directory.
+    // First, create a directory to store all ply files. The newly created directory name is
+    // "PlyFiles" which will be created under the given directory. IF THE FILES ALREADY EXIST, THEN
+    // IT WILL OVER WRITE IT. NEEDS TO BE FIXED.
     std::ostringstream dirName;
     dirName << argv[1] <<"/PlyFiles/";
     std::ostringstream cmdName;							// Command to create a directory
     cmdName << "mkdir " << dirName.str();
     std::system(cmdName.str().c_str());
 
-    // Now run a forloop to go through all the files starting with "start number" and ending with "end number" given by the user.
+    // Now run a forloop to go through all the files starting with "start number" and ending with
+    // "end number" given by the user.
     int startNum = std::atoi(argv[4]);
     int endNum = std::atoi(argv[5]);
-    for (int iFN=startNum; iFN<endNum; iFN++){
-        // Get the image name. The image name will include both the path and the file name including the file extension. The file extension we are going to use here is "png".
+    for (int iFN=startNum; iFN<endNum; iFN++){	// FOR EACH DEPTH IMAGE
+        // Get the image name. The image name will include both the path and the file name including
+        // the file extension. The file extension we are going to use here is "png".
         std::ostringstream imgFileName;
-        imgFileName << argv[1] << "/" << argv[2] << "_" << std::setfill('0') << std::setw(4)<< iFN << ".png";
+        imgFileName << argv[1] << "/" << argv[2] << "_" << std::setfill('0') << std::setw(4)\
+                               << iFN << ".png";
         std::cout << "The image name is: " << imgFileName.str() << std::endl;
-        // Read the image and if the format is unrecognizable or no data is available then exit the prgram.
-        cv::Mat imageMat;
-        imageMat = cv::imread( imgFileName.str(), CV_LOAD_IMAGE_ANYDEPTH | CV_LOAD_IMAGE_ANYCOLOR);
 
-        if ( !imageMat.data )
+        // Read the image and if the format is unrecognizable or no data is available then exit
+        // the prgram. As the images obtained from the libfreenect2 are filpped vertically, so flip
+        // them again.
+        cv::Mat imageMatFlip, imageMat;
+        imageMatFlip = cv::imread( imgFileName.str(), CV_LOAD_IMAGE_ANYDEPTH | CV_LOAD_IMAGE_ANYCOLOR);
+
+        if ( !imageMatFlip.data )
         {
             printf("No image data \n");
             return -1;
         }
+
+        // Make a vertical flip.
+        cv::flip(imageMatFlip, imageMat, 0);
 
         int r, c;
 
@@ -84,8 +96,8 @@ int main(int argc, char** argv )
 
         // Convert the image pixels into 3D point clouds and crate a ply file in the end.
         std::vector<std::vector<float>> gridMat;
-        for (r=0; r<imageMat.rows; r++){
-            for (c=0; c<imageMat.cols; c++){
+        for (r=0; r<imageMat.rows; r++){	// FOR EACH ROW ELEMENT
+            for (c=0; c<imageMat.cols; c++){	// FOR EACH COLUMN ELEMENT
                 float Zw = imageMat.at<float>(r,c)/(1000.0f);				//Depth
                 // If the depth is beyond the required value the ignore the pixel.
                 if (Zw > 0.5 && Zw < atoi(argv[3])){
@@ -101,8 +113,8 @@ int main(int argc, char** argv )
                     // Store the vector
                     gridMat.push_back(tmpRow);
                 }
-            }
-        }
+            }	// END COLUMN-FOR
+        }	// END ROW-FOR
 
 #ifdef DEBUG
         // Sanity check for the image.
@@ -128,7 +140,9 @@ int main(int argc, char** argv )
         std::cout << "Been here 3" << std::endl;
 #endif
 
-        // Get the image name by discarding the extension. Then create a folder, which will hold the ply files, inside the main folder by getting rid of the depth image file name with extension.
+        // Get the image name by discarding the extension. Then create a folder, which will hold
+        // the ply files, inside the main folder by getting rid of the depth image file name with
+        // extension.
 
         // Now write the points into a ply file.
         std::ostringstream conStr;
@@ -159,6 +173,6 @@ int main(int argc, char** argv )
         }
 
         plyFile.close();
-    }
+    }	// END IMAGE-FOR
     return 0;
 }
