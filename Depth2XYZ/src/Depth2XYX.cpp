@@ -14,15 +14,32 @@
 struct camera_params_t
 {
     struct ir_t{
-        float cx = 254.878f;
-        float cy = 205.395f;
-        float fx = 365.456f;
-        float fy = 365.456f;
-        float k1 = 0.0905474;
-        float k2 = -0.26819;
-        float k3 = 0.0950862;
+//        float cx = 254.878f;
+//        float cy = 205.395f;
+//        float fx = 365.456f;
+//        float fy = 365.456f;
+//        float k1 = 0.0905474;
+//        float k2 = -0.26819;
+//        float k3 = 0.0950862;
+//        float p1 = 0.0;
+//        float p2 = 0.0;
+//        float cx = 255.16569542;
+//        float cy = 211.82460040;
+//        float fx = 367.28674900;
+//        float fy = 367.28675187;
+//        float k1 = 0.0914235179439778;
+//        float k2 = -0.269355436246;
+//        float k3 = 0.092570290246685;
         float p1 = 0.0;
         float p2 = 0.0;
+        // My calibration values.
+        float cx = 246.827688819385173;
+        float cy = 208.082873938749344;
+        float fx = 365.630641419457390;
+        float fy = 365.514101119250824;
+        float k1 = 0.091923194251939 ;
+        float k2 = -0.237043183681760;
+        float k3 = 0.001359406123628;
     }ir;
 }camera_params;
 
@@ -62,16 +79,16 @@ int main(int argc, char** argv )
         // the prgram. As the images obtained from the libfreenect2 are filpped vertically, so flip
         // them again.
         cv::Mat imageMatFlip, imageMat;
-        imageMatFlip = cv::imread( imgFileName.str(), CV_LOAD_IMAGE_ANYDEPTH | CV_LOAD_IMAGE_ANYCOLOR);
+        imageMat = cv::imread( imgFileName.str(), CV_LOAD_IMAGE_ANYDEPTH | CV_LOAD_IMAGE_ANYCOLOR);
 
-        if ( !imageMatFlip.data )
+        if ( !imageMat.data )
         {
             printf("No image data \n");
             return -1;
         }
 
         // Make a vertical flip.
-        cv::flip(imageMatFlip, imageMat, 0);
+//        cv::flip(imageMatFlip, imageMat, 0);
 
         int r, c;
 
