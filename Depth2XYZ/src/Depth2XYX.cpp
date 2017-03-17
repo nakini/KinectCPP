@@ -8,6 +8,8 @@
 #include <sstream>			// Hold concatenated string
 #include <cstdlib>			// atoi, system etc
 #include <iomanip>			// Set fixed width and fill them with 0s
+#include "plyFunctions.h"
+
 //#define DEBUG
 
 //IR Camera parameters as given by libfreenect2
@@ -166,30 +168,31 @@ int main(int argc, char** argv )
         conStr << argv[2] << "_" << std::setfill('0') << std::setw(4)<< iFN;
         std::string plyFileName;
         plyFileName = dirName.str()+"/"+conStr.str()+".ply";
-        std::cout << plyFileName << std::endl;
-        std::ofstream plyFile;
-        plyFile.open(plyFileName.c_str());
+//        std::cout << plyFileName << std::endl;
+//        std::ofstream plyFile;
+//        plyFile.open(plyFileName.c_str());
 
-        // Insert the header
-        plyFile << "ply\n";
-        plyFile << "format   ascii 1.0\n";
-        plyFile << "comment made by Tushar Nakini, ViGIR\n";
-        plyFile << "element vertex " << gridMat.size() <<"\n";
-        plyFile << "property float32 x\n";
-        plyFile << "property float32 y\n";
-        plyFile << "property float32 z\n";
-        plyFile << "property uchar red\n";
-        plyFile << "property uchar green\n";
-        plyFile << "property uchar blue\n";
-        plyFile << "end_header\n";
+//        // Insert the header
+//        plyFile << "ply\n";
+//        plyFile << "format   ascii 1.0\n";
+//        plyFile << "comment made by Tushar Nakini, ViGIR\n";
+//        plyFile << "element vertex " << gridMat.size() <<"\n";
+//        plyFile << "property float32 x\n";
+//        plyFile << "property float32 y\n";
+//        plyFile << "property float32 z\n";
+//        plyFile << "property uchar red\n";
+//        plyFile << "property uchar green\n";
+//        plyFile << "property uchar blue\n";
+//        plyFile << "end_header\n";
 
-        // Write the values into the ply file.
-        for (int iGM=0; iGM<gridMat.size(); iGM++){
-            plyFile << gridMat[iGM][0] << " " << gridMat[iGM][1] << " " << gridMat[iGM][2] << " "\
-                                       << 255 << " " << 255 << " " << 255 << "\n";
-        }
+//        // Write the values into the ply file.
+//        for (int iGM=0; iGM<gridMat.size(); iGM++){
+//            plyFile << gridMat[iGM][0] << " " << gridMat[iGM][1] << " " << gridMat[iGM][2] << " "\
+//                                       << 255 << " " << 255 << " " << 255 << "\n";
+//        }
 
-        plyFile.close();
+//        plyFile.close();
+        xyz2ply(plyFileName, gridMat);
     }	// END IMAGE-FOR
     return 0;
 }
