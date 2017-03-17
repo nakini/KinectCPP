@@ -52,7 +52,7 @@ int main(int argc, char** argv )
     if ( argc != 6 )
     {
         std::cout << "usage: Depth2XYZ <Image_Dir_Path> <Image_Name without any number or extension>" << \
-                    "<Maximum_Depth> <Start_Num> <Stop_Num>" << std::endl;
+                    " <Maximum_Depth> <Start_Num> <Stop_Num>" << std::endl;
         return -1;
     }
 
@@ -119,7 +119,7 @@ int main(int argc, char** argv )
             for (c=0; c<imageMat.cols; c++){	// FOR EACH COLUMN ELEMENT
                 float Zw = imageMat.at<float>(r,c)/(1000.0f);				//Depth
                 // If the depth is beyond the required value the ignore the pixel.
-                if (Zw > 0.5 && Zw < atoi(argv[3])){
+                if (Zw > 0.5 && Zw < atof(argv[3])){
                     float Xw = (c-camera_params.ir.cx)*Zw/camera_params.ir.fx;
                     float Yw = (r-camera_params.ir.cy)*Zw/camera_params.ir.fy;
 
@@ -162,37 +162,14 @@ int main(int argc, char** argv )
         // Get the image name by discarding the extension. Then create a folder, which will hold
         // the ply files, inside the main folder by getting rid of the depth image file name with
         // extension.
-
-        // Now write the points into a ply file.
-        std::ostringstream conStr;
+        std::ostringstream conStr; 			// Now write the points into a ply file.
         conStr << argv[2] << "_" << std::setfill('0') << std::setw(4)<< iFN;
         std::string plyFileName;
         plyFileName = dirName.str()+"/"+conStr.str()+".ply";
-//        std::cout << plyFileName << std::endl;
-//        std::ofstream plyFile;
-//        plyFile.open(plyFileName.c_str());
-
-//        // Insert the header
-//        plyFile << "ply\n";
-//        plyFile << "format   ascii 1.0\n";
-//        plyFile << "comment made by Tushar Nakini, ViGIR\n";
-//        plyFile << "element vertex " << gridMat.size() <<"\n";
-//        plyFile << "property float32 x\n";
-//        plyFile << "property float32 y\n";
-//        plyFile << "property float32 z\n";
-//        plyFile << "property uchar red\n";
-//        plyFile << "property uchar green\n";
-//        plyFile << "property uchar blue\n";
-//        plyFile << "end_header\n";
-
-//        // Write the values into the ply file.
-//        for (int iGM=0; iGM<gridMat.size(); iGM++){
-//            plyFile << gridMat[iGM][0] << " " << gridMat[iGM][1] << " " << gridMat[iGM][2] << " "\
-//                                       << 255 << " " << 255 << " " << 255 << "\n";
-//        }
-
-//        plyFile.close();
-        xyz2ply(plyFileName, gridMat);
+        int num_pts = xyz2ply(plyFileName, gridMat);
+        if (num_pts > 0){
+            std::cout << "Total number of points in " << conStr.str() << " are " << num_pts << std::endl;
+        }
     }	// END IMAGE-FOR
     return 0;
 }
