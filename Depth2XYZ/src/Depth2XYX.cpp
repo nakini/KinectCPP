@@ -8,7 +8,7 @@
 #include <sstream>			// Hold concatenated string
 #include <cstdlib>			// atoi, system etc
 #include <iomanip>			// Set fixed width and fill them with 0s
-#include "plyFunctions.h"
+#include "PlyFunctions.h"
 
 //#define DEBUG
 

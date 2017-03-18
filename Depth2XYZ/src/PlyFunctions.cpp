@@ -1,4 +1,4 @@
-#include "plyFunctions.h"
+#include "PlyFunctions.h"
 
 int xyz2ply(std::string file_name, std::vector<std::vector<float>> grid_mat){
     int num_points = 0;					// Total number of points

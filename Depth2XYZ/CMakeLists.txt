@@ -54,5 +54,5 @@ if (OpenCV_FOUND)
   SET( SYSTEM_LIBS  ${SYSTEM_LIBS}  ${OpenCV_LIBS} )
 endif()
 
-add_executable( Depth2XYX  ${SOURCE_FILE_DIR}/Depth2XYX.cpp ${SOURCE_FILE_DIR}/plyFunctions.cpp)
+add_executable( Depth2XYX  ${SOURCE_FILE_DIR}/Depth2XYX.cpp ${SOURCE_FILE_DIR}/PlyFunctions.cpp)
 target_link_libraries( Depth2XYX  ${SYSTEM_LIBS} )
