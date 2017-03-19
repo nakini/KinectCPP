@@ -1,5 +1,7 @@
 #include "PlyFunctions.h"
 
+// Given a point xyz values in the form of a vector, this function creates a ply file and
+// also returns total number of points in the ply file. The input vector is of size Nx3.
 int xyz2ply(std::string file_name, std::vector<std::vector<float>> grid_mat){
     int num_points = 0;					// Total number of points
     std::ofstream plyFile;
@@ -30,7 +32,35 @@ int xyz2ply(std::string file_name, std::vector<std::vector<float>> grid_mat){
     return num_points;
 }
 
-void ply2xyz(std::string file_name, std::vector<std::vector<float>> grid_mat){
+// This function return xyz coordinates of a point cloud in the form of a Nx3 vector.
+std::vector<std::vector<float>> ply2xyz(std::string file_name){
+    // Vector to hold all the XYZ points.
+    std::vector<std::vector<float>> grid_mat;
 
+    // Check the file and open it if exists.
+    std::ifstream in_file(file_name);
+    if(in_file.is_open()){
+        std::string line_str;						// Container to hold each line
+        unsigned long num_vert;				// Number of vertices in the point cloud
+
+        // Read the header first.
+        for(int line=0; line<11; line++){
+            std::getline(in_file, line_str);
+            if (line==3){
+                std::istringstream iss(line_str);
+                std::string word;
+                while(iss){
+                    iss>>word;
+                }
+                num_vert = std::stoul(word);      // Convert the number of vertics into an integer
+            }
+            in_file >> std::ws;					// Read end of the white space including new line
+        }
+    }else{
+        // Unable to open the file so throw an error.
+        std::cout << "Cannot open the file" << std::endl;
+        std::exit;
+    }
+    in_file.close();
+    return grid_mat;
 }
-

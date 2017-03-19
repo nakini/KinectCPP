@@ -9,7 +9,6 @@ if( ${CMAKE_BINARY_DIR} STREQUAL ${PROJECT_SOURCE_DIR} )
  change into it and re-invoke cmake")
 endif()
 
-
 # To use PKG_CHECK_MODULES to find some optional packages
 FIND_PACKAGE(PkgConfig)
 
