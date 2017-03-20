@@ -45,15 +45,62 @@ struct camera_params_t
     }ir;
 }camera_params;
 
+// Show a help message.
+static void showUsage(){
+    std::cerr << "usage: Depth2XYZ "
+                 << " Image_Dir_Path "
+                 << " Image_Name without any number or extension "
+                 << " Maximum_Depth "
+                 << " Start_Num "
+                 << " Stop_Num "
+                 << " [-rx rotation_around_X_axis] "
+                 << " [-ry rotation_around_Y_axis] "
+                 << " [-rz rotation_around_Z_axis] "
+                 << " [-tx translation_along_X_axis] "
+                 << " [-ty translation_along_Y_axis] "
+                 << " [-tz translation_along_Z_axis] "
+                 << std::endl;
+}
+
 // Read an image which is 16bit/pixel and create a 3D model
 int main(int argc, char** argv )
 {
-    // Check the input arguments. The user should provide the image path and the maximum distance.
-    if ( argc != 6 )
+    // Check the input arguments.
+    if ( argc < 6 )
     {
-        std::cout << "usage: Depth2XYZ <Image_Dir_Path> <Image_Name without any number or extension>" << \
-                    " <Maximum_Depth> <Start_Num> <Stop_Num>" << std::endl;
-        return -1;
+        showUsage();
+        return 1;
+    }
+
+    // Try to read the optional arguments.
+    long rot_x(0), rot_y(0), rot_z(0), trans_x(0), trans_y(0), trans_z(0);
+    int rot_axis_order[]={0, 0, 0};
+    // If we want to rotate the point cloud arround any axis or translate along any axis then use
+    // the following input arguments or just use identity for rotation and 0 for translation.
+    for (int argI=6; argI<argc; ++argI){
+        const std::string arg(argv[argI]);                  // Read the given argument.
+        if (arg == "-rx"){
+            ++argI;
+            rot_x = std::strtol(argv[argI], NULL, 0);
+        }else if (arg == "-rx"){
+            ++argI;
+            rot_x = std::strtol(argv[argI], NULL, 0);
+        }else if (arg == "-rx"){
+            ++argI;
+            rot_x = std::strtol(argv[argI], NULL, 0);
+        }else if (arg == "-rx"){
+            ++argI;
+            rot_x = std::strtol(argv[argI], NULL, 0);
+        }else if (arg == "-rx"){
+            ++argI;
+            rot_x = std::strtol(argv[argI], NULL, 0);
+        }else if (arg == "-rx"){
+            ++argI;
+            rot_x = std::strtol(argv[argI], NULL, 0);
+        }else{
+            showUsage();
+            return 1;
+        }
     }
 
     // First, create a directory to store all ply files. The newly created directory name is
