@@ -28,3 +28,6 @@ bin-release/
 
 # Ply files
 *.ply
+
+# Custom static library folders
+lib/
