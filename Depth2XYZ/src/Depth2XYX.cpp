@@ -5,11 +5,11 @@
 #include <fstream>
 #include <vector>
 #include <string>
-#include <sstream>			// Hold concatenated string
-#include <cstdlib>			// atoi, system etc
-#include <iomanip>			// Set fixed width and fill them with 0s
-#include "PlyFunctions.h"
-
+#include <sstream>			            // Hold concatenated string
+#include <cstdlib>			            // atoi, system etc
+#include <iomanip>			            // Set fixed width and fill them with 0s
+#include "PlyFunctions.h"               // PLY read/write functions
+#include "Transformation.h"             // Rotation/Translation functions
 //#define DEBUG
 
 //IR Camera parameters as given by libfreenect2
