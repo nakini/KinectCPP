@@ -43,15 +43,20 @@ else()
     include_directories(${CMAKE_CURRENT_BINARY_DIR})
 endif()
 
-# Check for OpenCV packages.
+# Check for OpenCV like core, photo, xphoto, etc.
 FIND_PACKAGE(OpenCV)
 if (OpenCV_FOUND)
-  message("OpenCV Found")
+  message("OpenCV Found and the version is --  ${OpenCV_VERSION}")
   #SET(CIMG_CFLAGS "${CIMG_CFLAGS} ${CIMG_OPENCV_CCFLAGS}")
   include_directories(${OpenCV_INCLUDE_DIRS})
   link_directories(${OpenCV_LIB_DIRS})
   SET( SYSTEM_LIBS  ${SYSTEM_LIBS}  ${OpenCV_LIBS} )
 endif()
 
-add_executable( Depth2XYX  ${SOURCE_FILE_DIR}/Depth2XYX.cpp ${SOURCE_FILE_DIR}/PlyFunctions.cpp ${SOURCE_FILE_DIR}/Transformation.cpp)
+# Add source files to a variable
+SET(SRC ${SOURCE_FILE_DIR}/Depth2XYX.cpp
+    ${SOURCE_FILE_DIR}/PlyFunctions.cpp
+    ${SOURCE_FILE_DIR}/Transformation.cpp
+)
+add_executable( Depth2XYX  ${SRC})
 target_link_libraries( Depth2XYX  ${SYSTEM_LIBS} )
