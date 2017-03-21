@@ -55,8 +55,10 @@ endif()
 
 # Add source files to a variable
 SET(SRC ${SOURCE_FILE_DIR}/Depth2XYX.cpp
-    ${SOURCE_FILE_DIR}/PlyFunctions.cpp
-    ${SOURCE_FILE_DIR}/Transformation.cpp
 )
+
+# Add the sub-folders which contain all the helper files.
+add_subdirectory(utils)
+
 add_executable( Depth2XYX  ${SRC})
-target_link_libraries( Depth2XYX  ${SYSTEM_LIBS} )
+target_link_libraries( Depth2XYX  ${SYSTEM_LIBS} Utils)
