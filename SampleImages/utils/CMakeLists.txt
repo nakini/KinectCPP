@@ -1,7 +1,6 @@
 # Add new variable for src utils lib
 SET(UTLIS_LIB_SRC
-    PlyFunctions.cpp
-    Transformation.cpp 
+    GetImageList.cpp
 )
 
 # Create our new library

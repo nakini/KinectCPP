@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
-project(Depth2XYX )
+project(SampleImages)
 
 # Prevent compilation in-source
 if( ${CMAKE_BINARY_DIR} STREQUAL ${PROJECT_SOURCE_DIR} )
@@ -54,11 +54,11 @@ if (OpenCV_FOUND)
 endif()
 
 # Add source files to a variable
-SET(SRC ${SOURCE_FILE_DIR}/Depth2XYX.cpp
+SET(SRC ${SOURCE_FILE_DIR}/SampleImages.cpp
 )
 
 # Add the sub-folders which contain all the helper files.
 add_subdirectory(utils)
 
-add_executable( Depth2XYX  ${SRC})
-target_link_libraries( Depth2XYX  ${SYSTEM_LIBS} Utils)
+add_executable( SampleImages ${SRC})
+target_link_libraries(SampleImages ${SYSTEM_LIBS} Utils)
