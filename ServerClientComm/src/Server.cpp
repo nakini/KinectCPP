@@ -67,6 +67,7 @@ int main(int argc, char *argv[])
         my_id = strtok(NULL, ".");
     }
     int MyID = atoi(my_id);
+    printf("Last octate of the IP - %d\n", MyID);
 
     // binds the socket to the address of the host and the port number
     if (bind(sock, (struct sockaddr *)&server, length) < 0)
@@ -87,6 +88,7 @@ int main(int argc, char *argv[])
         // bzero: to "clean up" the buffer. The messages aren't always the same length...
         bzero(buffer,MSG_SIZE);		// sets all values to zero. memset() could be used
 
+        printf("Waiting to receive from peer.\n");
         // receive from a client
         n = recvfrom(sock, buffer, MSG_SIZE, 0, (struct sockaddr *)&addr, &fromlen);
         if (n < 0)
@@ -98,7 +100,7 @@ int main(int argc, char *argv[])
             //system("ls -l");
             sysReturnVal = system("/home/ubuntu/Documents/libfreenect2/build/bin/Protonect -t \"/media/SataHDD/Data/\" &");
             bzero(ackBuffer, MSG_SIZE);
-            sprintf(ackBuffer, "From-%d -- System return is %d", MyID, sysReturnVal);
+            sprintf(ackBuffer, "System return is %d", sysReturnVal);
             n = sendto(sock, ackBuffer, MSG_SIZE, 0, (struct sockaddr *)&addr, fromlen);
             if (n < 0){
                 error("sendto");
@@ -106,16 +108,15 @@ int main(int argc, char *argv[])
         }else if(strncasecmp(buffer, "Kill", 4) == 0){
             sysReturnVal = system("killall Protonect");
             bzero(ackBuffer, MSG_SIZE);
-            sprintf(ackBuffer, "From-%d -- System return is %d", MyID, sysReturnVal);
+            sprintf(ackBuffer, "System return is %d", sysReturnVal);
             n = sendto(sock, ackBuffer, MSG_SIZE, 0, (struct sockaddr *)&addr, fromlen);
             if (n < 0){
                 error("sendto");
             }
         }else{
             //       addr.sin_addr.s_addr = inet_addr("192.168.1.255");	// broadcast address
-            printf("Now I am going to send an acknowledgement\n");
             bzero(ackBuffer, MSG_SIZE);
-            sprintf(ackBuffer, "From-%d -- Got this message: %s", MyID, buffer);
+            sprintf(ackBuffer, "Got this message: %s\n", buffer);
             n = sendto(sock, ackBuffer, MSG_SIZE, 0, (struct sockaddr *)&addr, fromlen);
             if (n  < 0)
                 error("sendto");
