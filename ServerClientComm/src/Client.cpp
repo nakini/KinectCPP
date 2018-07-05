@@ -108,7 +108,7 @@ int main(int argc, char *argv[]){
     // it will be the TK1's whose time will be updated.
     bzero(buffer,MSG_SIZE);							// bzero: to "clean up" the buffer.
     std::string sysDateTime = currentDateTime();	// System date & time
-    sprintf(buffer, "sudo date -s %s", sysDateTime.c_str());
+    sprintf(buffer, "sudo date -s \"%s\"", sysDateTime.c_str());
     n = sendto(sock, buffer, strlen(buffer), 0,
                (const struct sockaddr *)&anybody,length);
     if (n < 0)
