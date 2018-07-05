@@ -96,7 +96,15 @@ int main(int argc, char *argv[])
 
         printf("Received a datagram. It says: %s", buffer);
 
-        if (strncasecmp(buffer, "Kinect", 6) == 0){
+        if (strncasecmp(buffer, "sudo date", 9) == 0){
+            sysReturnVal = system(buffer);
+            bzero(ackBuffer, MSG_SIZE);
+            sprintf(ackBuffer, "System return for setting date and time is %d", sysReturnVal);
+            n = sendto(sock, ackBuffer, MSG_SIZE, 0, (struct sockaddr *)&addr, fromlen);
+            if (n < 0){
+                error("sendto");
+            }
+        }else if (strncasecmp(buffer, "Kinect", 6) == 0){
             //system("ls -l");
             sysReturnVal = system("/home/ubuntu/Documents/libfreenect2/build/bin/Protonect -t \"/media/SataHDD/Data/\" &");
             bzero(ackBuffer, MSG_SIZE);

@@ -8,12 +8,27 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 #include <pthread.h>
+#include <iostream>
+#include <string>
 
 #define MSG_SIZE 400			// Message size
 int n, sock;
 unsigned int length;
 struct sockaddr_in anybody, from;
 char buffer[MSG_SIZE];			// To store received messages or messages to be sent.
+
+// Get current date/time, format is YYYY-MM-DD.HH:mm:ss
+const std::string currentDateTime() {
+    time_t     now = time(0);
+    struct tm  tstruct;
+    char       buf[80];
+    tstruct = *localtime(&now);
+    // Visit http://en.cppreference.com/w/cpp/chrono/c/strftime
+    // for more information about date/time format
+    strftime(buf, sizeof(buf), "%Y %m %d %X", &tstruct);
+
+    return buf;
+}
 
 // Error Message
 // -------------
@@ -87,6 +102,17 @@ int main(int argc, char *argv[]){
         fprintf(stderr, "Error creating thread\n");
         return 1;
     }
+
+    // Get the system date and time and send a system command to server which
+    // can modify the date/time of the system the server running. In our case,
+    // it will be the TK1's whose time will be updated.
+    bzero(buffer,MSG_SIZE);							// bzero: to "clean up" the buffer.
+    std::string sysDateTime = currentDateTime();	// System date & time
+    sprintf(buffer, "sudo date -s %s", sysDateTime.c_str());
+    n = sendto(sock, buffer, strlen(buffer), 0,
+               (const struct sockaddr *)&anybody,length);
+    if (n < 0)
+        error("Sendto: While sending date and time");
     do
     {
         // bzero: to "clean up" the buffer.
@@ -112,7 +138,7 @@ int main(int argc, char *argv[]){
                 n = sendto(sock, msg, strlen(msg), 0,
                            (const struct sockaddr *)&anybody,length);
                 if (n < 0)
-                    error("Sendto");
+                    error("Sendto: While sending mesaage to individual machine");
             }else if((strncasecmp(buffer, "Kill", 4) == 0) ||
                      (strncasecmp(buffer, "Kinect", 6) == 0)||
                      (strncasecmp(buffer, "Test", 4) == 0)){	// Send to All IPs
@@ -123,7 +149,7 @@ int main(int argc, char *argv[]){
                 n = sendto(sock, buffer, strlen(buffer), 0,
                            (const struct sockaddr *)&anybody,length);
                 if (n < 0)
-                    error("Sendto");
+                    error("Sendto: While broadcasting to all machines");
             }else{
                 // Set it to the broadcast IP as it is the default.
                 anybody.sin_addr.s_addr = inet_addr("192.168.1.255");	// Broadcast address
