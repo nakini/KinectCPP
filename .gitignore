@@ -25,6 +25,7 @@ bin-release/
 # CMake cache files
 *.user
 *.autosave
+CMakeLists.txt.*
 
 # Ply files
 *.ply
