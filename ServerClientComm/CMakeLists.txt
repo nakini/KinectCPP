@@ -31,6 +31,8 @@ SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin/win32/)
 ENDIF()
 
 
+# PTHREAD Support (For CMake 2.8.12+)
+find_package (Threads)
 
 #Enable C++11 support
 SET(ENABLE_C11 ON CACHE BOOL "Compile with C++11")
@@ -62,10 +64,11 @@ SET(SRC3 ${SOURCE_FILE_DIR}/ProtonectClient.cpp)
 #add_subdirectory(utils)
 
 add_executable( Server ${SRC1})
-target_link_libraries( Server ${SYSTEM_LIBS} )
+target_link_libraries( Server ${SYSTEM_LIBS} Threads::Threads)
+#target_link_libraries( Server ${SYSTEM_LIBS} ${CMAKE_THREAD_LIBS_INIT})
 
 add_executable(Client ${SRC2})
-target_link_libraries(Client ${SYSTEM_LIBS} )
+target_link_libraries(Client ${SYSTEM_LIBS} Threads::Threads)
 
 add_executable(ProtonectClient ${SRC3})
-target_link_libraries(ProtonectClient ${SYSTEM_LIBS} )
+target_link_libraries(ProtonectClient ${SYSTEM_LIBS} Threads::Threads)
