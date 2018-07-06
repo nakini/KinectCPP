@@ -60,6 +60,7 @@ SET(SRC1 ${SOURCE_FILE_DIR}/Server.cpp)
 SET(SRC2 ${SOURCE_FILE_DIR}/Client.cpp)
 SET(SRC3 ${SOURCE_FILE_DIR}/ProtonectClient.cpp)
 SET(SRC4 ${SOURCE_FILE_DIR}/GetDateTime.cpp)
+SET(SRC5 ${SOURCE_FILE_DIR}/ExecuteCommand.cpp)
 
 # Add the sub-folders which contain all the helper files.
 #add_subdirectory(utils)
@@ -77,3 +78,7 @@ target_link_libraries(ProtonectClient ${SYSTEM_LIBS} Threads::Threads)
 # Time checking module
 add_executable(GetDateTime ${SRC4})
 target_link_libraries(GetDateTime ${SYSTEM_LIBS} Threads::Threads)
+
+# Get the system command output message
+add_executable(ExecuteCommand ${SRC5})
+target_link_libraries(ExecuteCommand ${SYSTEM_LIBS} Threads::Threads)
