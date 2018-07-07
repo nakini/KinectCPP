@@ -73,7 +73,7 @@ int main(int argc, char *argv[]){
     anybody.sin_family = AF_INET;				// Symbol constant for Internet domain
     //anybody.sin_port = htons(atoi(argv[1]));	// Port field
     anybody.sin_port = htons(5432);				// Port field
-    anybody.sin_addr.s_addr = inet_addr("192.168.1.255");	// Broadcast address
+    anybody.sin_addr.s_addr = inet_addr("192.168.0.255");	// Broadcast address
 
     length = sizeof(struct sockaddr_in);		// size of structure
 
@@ -102,7 +102,7 @@ int main(int argc, char *argv[]){
                 msg = strtok(msg, "\n");
                 char anybodyIP_Full[15];
                 printf("The value of the last IP is: %s\n", anybodyIP);
-                sprintf(anybodyIP_Full, "192.168.1.%d", atoi(anybodyIP)%256);
+                sprintf(anybodyIP_Full, "192.168.0.%d", atoi(anybodyIP)%256);
                 printf("You will send the message \"%s\" to the IP: %s\n\n", msg, anybodyIP_Full);
 
                 // Send the message
@@ -116,14 +116,14 @@ int main(int argc, char *argv[]){
                 printf("You will send the message \"%s\" to all the IPs\n\n",
                        strtok(buffer, "\n"));
                 // Change the address to brodcast.
-                anybody.sin_addr.s_addr = inet_addr("192.168.1.255");	// Broadcast address
+                anybody.sin_addr.s_addr = inet_addr("192.168.0.255");	// Broadcast address
                 n = sendto(sock, buffer, strlen(buffer), 0,
                            (const struct sockaddr *)&anybody,length);
                 if (n < 0)
                     error("Sendto");
             }else{
                 // Set it to the broadcast IP as it is the default.
-                anybody.sin_addr.s_addr = inet_addr("192.168.1.255");	// Broadcast address
+                anybody.sin_addr.s_addr = inet_addr("192.168.0.255");	// Broadcast address
                 displayMessage();
             }
         }
