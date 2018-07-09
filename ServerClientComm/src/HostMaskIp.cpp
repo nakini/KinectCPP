@@ -12,9 +12,13 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+
 #include <sys/ioctl.h>
 #include <net/if.h>
+#include <ifaddrs.h>
 
+#include <linux/if_link.h>
+//#define _GNU_SOURCE     	/* To get defns of NI_MAXSERV and NI_MAXHOST */
 #define MSG_SIZE 400        // Maximum size of the message
 
 // Error Message
@@ -28,6 +32,8 @@ void error(const char *msg){
 void HostIP_IOCTL();
 // Using gethostbyname() function
 void HostIP_GETHOSTBYNAME();
+// Using getifaddrs() function
+void HostIP_GETIFADDRS();
 
 // main function
 int main(int argc, char* argv[]){
@@ -62,6 +68,7 @@ int main(int argc, char* argv[]){
     // Get the last octate of the machine IP address
     HostIP_GETHOSTBYNAME();
 	HostIP_IOCTL();
+	HostIP_GETIFADDRS();
 
     // Get the last octate of the machine IP address
     // binds the socket to the address of the hostInfo and the port number
@@ -103,23 +110,30 @@ void HostIP_GETHOSTBYNAME(){
     }
 
     //Parses to get my identifier
-    char *myId = new char[4];
+    int myID[4] = {0};
     for(int iIP=0; addrList[iIP] != NULL; iIP++){
-        myId = strtok(inet_ntoa(*addrList[iIP]), ".");
-        for(int i=0; i<3; i++){
-            myId = strtok(NULL, ".");
+		char *myIDtoken = NULL;
+        myIDtoken = strtok(inet_ntoa(*addrList[iIP]), ".");
+		int i = 0;
+		while(myIDtoken != NULL){
+			myID[i] = atoi(myIDtoken);
+			//std::cout << "Just for checking: " << myID[i] << std::endl;
+
             // Skip the loopback address
-            if(atoi(myId) == 127){
-                continue;
-            }
+            if(myID[i] == 127){
+				break;
+			}
+            myIDtoken = strtok(NULL, ".");
+			i++;
         }
     }
-    int MyID = atoi(myId);
-    std::cout << "Last octate of the IP - " << MyID << std::endl;
-	
-	//delete[] myId;
+    std::cout << "IP stored as integer: " << 
+		myID[0] << "." << myID[1] << "." << 
+		myID[2] << "." << myID[3] << std::endl;
 }
 
+// The following code is borrowed from -- 
+// http://www.geekpage.jp/en/programming/linux-network/get-ipaddr.php
 // Get the host machine IP address from the host name using IOCTL()
 void HostIP_IOCTL(){
 	int fd;
@@ -142,4 +156,77 @@ void HostIP_IOCTL(){
 	std::cout << "Hostinfo IP (IOCTL): " << 
 		inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr) << 
 		std::endl;
+}
+
+// Get the host machine IP, netmask, broadcast IP, etc using getifaddrs()
+void HostIP_GETIFADDRS(){
+	// Structures to hold various network related information.
+	struct ifaddrs *ifaddr, *ifa;
+	int family, s, n;
+	char host[NI_MAXHOST];
+	
+	if (getifaddrs(&ifaddr) == -1) {
+	    perror("getifaddrs");
+	    exit(EXIT_FAILURE);
+	}
+	
+	/* Walk through linked list, maintaining head pointer so we can free list 
+ 	 * later */
+	
+	for (ifa = ifaddr, n = 0; ifa != NULL; ifa = ifa->ifa_next, n++) {
+	    if (ifa->ifa_addr == NULL)
+	        continue;
+	
+	    family = ifa->ifa_addr->sa_family;
+	
+	    /* Display interface name and family (including symbolic form of the 
+ 		 * latter for the common families) */
+	
+	    printf("%-8s %s (%d)\n",
+	           ifa->ifa_name,
+	           (family == AF_PACKET) ? "AF_PACKET" :
+	           (family == AF_INET) ? "AF_INET" :
+	           (family == AF_INET6) ? "AF_INET6" : "???",
+	           family);
+	
+	    /* For an AF_INET* interface address, display the address */
+	
+	    //if (family == AF_INET || family == AF_INET6) {
+	    if (family == AF_INET) {
+	        s = getnameinfo(ifa->ifa_addr,
+	                (family == AF_INET) ? sizeof(struct sockaddr_in) :
+	                                      sizeof(struct sockaddr_in6),
+	                host, NI_MAXHOST,
+	                NULL, 0, NI_NUMERICHOST);
+	        if (s != 0) {
+	            printf("getnameinfo() failed: %s\n", gai_strerror(s));
+	            exit(EXIT_FAILURE);
+	        }
+	
+	        std::cout << "\t\taddress: " << host << std::endl;
+
+	        s = getnameinfo(ifa->ifa_broadaddr,
+	                (family == AF_INET) ? sizeof(struct sockaddr_in) :
+	                                      sizeof(struct sockaddr_in6),
+	                host, NI_MAXHOST,
+	                NULL, 0, NI_NUMERICHOST);
+	        if (s != 0) {
+	            printf("getnameinfo() failed: %s\n", gai_strerror(s));
+	            exit(EXIT_FAILURE);
+	        }
+	        std::cout << "\t\tbraodcast: " << host << std::endl;
+	
+	
+	    } else if (family == AF_PACKET && ifa->ifa_data != NULL) {
+	        struct rtnl_link_stats *stats = reinterpret_cast<struct rtnl_link_stats *>(ifa->ifa_data);
+	
+	        printf("\t\ttx_packets = %10u; rx_packets = %10u\n"
+	               "\t\ttx_bytes   = %10u; rx_bytes   = %10u\n",
+	               stats->tx_packets, stats->rx_packets,
+	               stats->tx_bytes, stats->rx_bytes);
+	    }
+	}
+	
+	freeifaddrs(ifaddr);
+	exit(EXIT_SUCCESS);
 }
